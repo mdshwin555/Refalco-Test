@@ -5,6 +5,7 @@ import 'package:sizer/sizer.dart';
 import 'Controllers/FavoritesController.dart';
 import 'Model/OrderModel.dart';
 import 'package:intl/intl.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 class AllInfo extends StatelessWidget {
   final OrderModel model;
@@ -67,25 +68,27 @@ class AllInfo extends StatelessWidget {
                     ),
                   ),
                   Obx(
-                        () => Positioned(
+                    () => Positioned(
                       top: 2.h,
                       right: 3.w,
                       child: CircleAvatar(
                         backgroundColor: Colors.white,
                         radius: 17.sp,
-                        child: IconButton(
-                          icon: iconController.isFavorite.value
+                        child: GestureDetector(
+                          child: iconController.isFavorite.value
                               ? Icon(
-                            Icons.favorite,
-                            size: 18.sp,
-                            color: Colors.red,
-                          )
+                                  Icons.favorite,
+                                  size: 18.sp,
+                                  color: Colors.red,
+                                )
                               : Icon(
-                            Icons.favorite_border,
-                            size: 18.sp,
-                            color: Colors.red,
-                          ),
-                          onPressed: () => iconController.toggleFavorite(),
+                                  Icons.favorite_border,
+                                  size: 18.sp,
+                                  color: Colors.red,
+                                ),
+                          onTap: ()  {
+                            iconController.toggleFavorite();
+                          },
                         ),
                       ),
                     ),

@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
@@ -7,6 +8,8 @@ import 'Model/OrderModel.dart';
 
 class ShowView extends StatelessWidget {
   final FavoriteOrdersController controller = Get.find();
+  final FavoriteOrdersController iconController =
+      Get.put(FavoriteOrdersController());
   final OrderModel model;
 
   ShowView(this.model);
@@ -43,23 +46,6 @@ class ShowView extends StatelessWidget {
         ),
         child: Stack(
           children: [
-            // Positioned(
-            //   left: -76,
-            //   top: 10,
-            //   child: Transform.rotate(
-            //     angle: -45 * 3.14 / 180,
-            //     child: Container(
-            //       width: 50.w,
-            //       height: 6.h,
-            //       decoration: BoxDecoration(
-            //         color: Color(0xff454545),
-            //         borderRadius: BorderRadius.circular(
-            //           25.sp,
-            //         ),
-            //       ),
-            //     ),
-            //   ),
-            // ),
             Positioned(
               left: 4.w,
               top: 2.h,
@@ -82,20 +68,28 @@ class ShowView extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Padding(
-                        padding: EdgeInsets.only(
-                          left: 30.w,
-                          top: 2.h,
-                        ),
-                        child: IconButton(
-                          icon: Icon(
-                            Icons.favorite_border,
-                            size: 20.sp,
+                      Obx(
+                        () => Padding(
+                          padding: EdgeInsets.only(
+                            left: 30.w,
+                            top: 2.h,
                           ),
-                          color: Colors.red,
-                          onPressed: () {
-
-                          },
+                          child: GestureDetector(
+                            child: iconController.isFavorite.value
+                                ? Icon(
+                                    Icons.favorite,
+                                    size: 18.sp,
+                                    color: Colors.red,
+                                  )
+                                : Icon(
+                                    Icons.favorite_border,
+                                    size: 18.sp,
+                                    color: Colors.red,
+                                  ),
+                            onTap: () {
+                              iconController.toggleFavorite();
+                            },
+                          ),
                         ),
                       ),
                     ],

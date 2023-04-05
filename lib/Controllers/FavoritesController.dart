@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:get/get.dart';
 
 class FavoriteOrdersController extends GetxController {
@@ -7,5 +8,7 @@ class FavoriteOrdersController extends GetxController {
   // Function to toggle the state of the icon
   void toggleFavorite() {
     isFavorite.value = !isFavorite.value;
+    final player = AudioPlayer();
+    isFavorite.value==true?player.play(AssetSource('audios/like.wav')):player.stop();
   }
 }
