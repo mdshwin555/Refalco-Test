@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 import 'Constants/constants.dart';
+import 'Controllers/FavoritesController.dart';
+import 'Controllers/FavoritesController.dart';
 import 'Home.dart';
 
 void main() {

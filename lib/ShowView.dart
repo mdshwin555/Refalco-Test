@@ -5,7 +5,6 @@ import 'AllInformatio.dart';
 import 'Model/OrderModel.dart';
 
 class ShowView extends StatelessWidget {
-
   final OrderModel model;
 
   ShowView(this.model);
@@ -13,7 +12,7 @@ class ShowView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: (){
+      onTap: () {
         Get.to(AllInfo(model));
       },
       child: Container(
@@ -32,9 +31,12 @@ class ShowView extends StatelessWidget {
             end: Alignment.bottomCenter,
           ),
           image: DecorationImage(
-            image: NetworkImage(
-                model.image),
+            image: NetworkImage(model.image),
             fit: BoxFit.cover,
+            colorFilter: ColorFilter.mode(
+              Colors.black.withOpacity(0.5),
+              BlendMode.darken,
+            ),
           ),
         ),
         child: Padding(
@@ -45,12 +47,31 @@ class ShowView extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Row(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(
+                      left: 30.w,
+                      top: 2.h,
+                    ),
+                    child: IconButton(
+                      icon: Icon(
+                        Icons.favorite_border,
+                        size: 20.sp,
+                      ),
+                      color: Colors.red,
+                      onPressed: () {},
+                    ),
+                  ),
+                ],
+              ),
               SizedBox(
-                height: 14.h,
+                height: 6.h,
               ),
               Container(
                 alignment: Alignment.topLeft,
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       'total ',
@@ -60,13 +81,29 @@ class ShowView extends StatelessWidget {
                           fontWeight: FontWeight.w500,
                           fontFamily: 'Alata'),
                     ),
-                    Text(
-                      model.total,
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 19.sp,
-                          fontWeight: FontWeight.w500,
-                          fontFamily: 'Alata'),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          model.total,
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20.sp,
+                              fontWeight: FontWeight.w500,
+                              fontFamily: 'Alata'),
+                        ),
+                        SizedBox(
+                          width: 1.w,
+                        ),
+                        Text(
+                          model.currency,
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 11.sp,
+                              fontWeight: FontWeight.w500,
+                              fontFamily: 'Alata'),
+                        ),
+                      ],
                     ),
                   ],
                 ),

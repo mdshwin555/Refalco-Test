@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
-
+import 'Controllers/FavoritesController.dart';
 import 'Model/OrderModel.dart';
+import 'ShowItems.dart';
+import 'ShowView.dart';
 
 class AllInfo extends StatelessWidget {
   final OrderModel model;
 
   AllInfo(this.model);
+  final FavoriteOrdersController controller = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -35,8 +39,11 @@ class AllInfo extends StatelessWidget {
                 image: DecorationImage(
                   image: NetworkImage(model.image),
                   fit: BoxFit.cover,
+                  colorFilter: ColorFilter.mode(
+                    Colors.black.withOpacity(0.5),
+                    BlendMode.darken,
+                  ),
                 ),
-
               ),
               child: Stack(
                 children: [
@@ -54,6 +61,24 @@ class AllInfo extends StatelessWidget {
                           Icons.arrow_back_ios_new_rounded,
                           size: 16.sp,
                           color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top: 2.h,
+                    right: 3.w,
+                    child: CircleAvatar(
+                      backgroundColor: Colors.white,
+                      radius: 17.sp,
+                      child: IconButton(
+                        onPressed: () {
+                          controller.favoriteOrders.add(model);
+                        },
+                        icon: Icon(
+                          Icons.favorite_border,
+                          size: 18.sp,
+                          color: Colors.red,
                         ),
                       ),
                     ),
@@ -77,11 +102,7 @@ class AllInfo extends StatelessWidget {
                       height: 10.h,
                       width: 40.w,
                       margin: EdgeInsets.only(
-                          top: 2.h,
-                          bottom: 1.h,
-                          left: 1.w,
-                          right: 1.w
-                      ),
+                          top: 2.h, bottom: 1.h, left: 1.w, right: 1.w),
                       padding: EdgeInsets.symmetric(
                         vertical: 2.h,
                         horizontal: 5.w,
@@ -89,8 +110,7 @@ class AllInfo extends StatelessWidget {
                       alignment: Alignment.centerLeft,
                       decoration: BoxDecoration(
                           color: Color(0xffffffff),
-                          borderRadius: BorderRadius.circular(20.sp)
-                      ),
+                          borderRadius: BorderRadius.circular(20.sp)),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -121,11 +141,7 @@ class AllInfo extends StatelessWidget {
                       height: 10.h,
                       width: 40.w,
                       margin: EdgeInsets.only(
-                          top: 2.h,
-                          bottom: 1.h,
-                          left: 1.w,
-                          right: 1.w
-                      ),
+                          top: 2.h, bottom: 1.h, left: 1.w, right: 1.w),
                       padding: EdgeInsets.symmetric(
                         vertical: 2.h,
                         horizontal: 5.w,
@@ -133,8 +149,7 @@ class AllInfo extends StatelessWidget {
                       alignment: Alignment.centerLeft,
                       decoration: BoxDecoration(
                           color: Color(0xffffffff),
-                          borderRadius: BorderRadius.circular(20.sp)
-                      ),
+                          borderRadius: BorderRadius.circular(20.sp)),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -161,86 +176,104 @@ class AllInfo extends StatelessWidget {
                 ],
               ),
             ),
-            Container(
-              height: 10.h,
-              width: 100.w,
-              margin: EdgeInsets.only(
-               top: 3.h,
-                bottom: 1.h,
-                left: 1.w,
-                right: 1.w
-              ),
-              padding: EdgeInsets.symmetric(
-                vertical: 2.h,
-                horizontal: 5.w,
-              ),
-              alignment: Alignment.centerLeft,
-              decoration: BoxDecoration(
-                color: Color(0xff434242),
-                borderRadius: BorderRadius.circular(20.sp)
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'name ',
-                    style: TextStyle(
-                      fontSize: 13.sp,
-                      color: Colors.white,
-                      fontFamily: 'Alata',
-                    ),
-                  ),
-                  Text(
-                    '${model.items[0].name}',
-                    style: TextStyle(
-                      fontSize: 19.sp,
-                      color: Colors.white,
-                      fontFamily: 'Alata',
-                    ),
-                  ),
-                ],
-              ),
+            SizedBox(
+              height: 3.h,
             ),
             Container(
-              height: 10.h,
-              width: 100.w,
-              margin: EdgeInsets.only(
-                  top: 2.h,
-                  bottom: 1.h,
-                  left: 1.w,
-                  right: 1.w
+              height: 40.h,
+              child: GridView.count(
+                crossAxisCount: 2,
+                children: List.generate(
+                  model.items.length,
+                  (int index) {
+                    return AnimationConfiguration.staggeredGrid(
+                      position: index,
+                      duration: Duration(milliseconds: 375),
+                      columnCount: 2,
+                      child: ScaleAnimation(
+                        child: FadeInAnimation(
+                          child: Container(
+                            margin: EdgeInsets.symmetric(
+                              vertical: 1.h,
+                              horizontal: 2.w,
+                            ),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(25.sp),
+                              gradient: LinearGradient(
+                                colors: [
+                                  Color(0xffbdc3c7),
+                                  Color(0xff2c3e50),
+                                ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                left: 0.w,
+                                bottom: 1.5.h,
+                              ),
+                              child: Stack(
+                                //crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Positioned(
+                                    left: -55,
+                                    top: 10,
+                                    child: Transform.rotate(
+                                      angle: -45 * 3.14 / 180,
+                                      child: Container(
+                                        width: 50.w,
+                                        height: 4.h,
+                                        decoration: BoxDecoration(
+                                          color: Colors.red,
+                                          borderRadius: BorderRadius.circular(
+                                            25.sp,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    top: 3.h,
+                                    left: 1.5.w,
+                                    child: Transform.rotate(
+                                      angle: -45 * 3.14 / 180,
+                                      child: Text(
+                                        '${model.items[index].price.toDouble()}',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 15.sp,
+                                            fontWeight: FontWeight.w500,
+                                            fontFamily: 'Alata'),
+                                      ),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    top: 12.5.h,
+                                    left: 2.w,
+                                    child: Container(
+                                      width: 40.w,
+                                      child: Text(
+                                        '${model.items[index].name}',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 18.sp,
+                                            fontWeight: FontWeight.w500,
+                                            fontFamily: 'Alata'),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
               ),
-              padding: EdgeInsets.symmetric(
-                vertical: 2.h,
-                horizontal: 5.w,
-              ),
-              alignment: Alignment.centerLeft,
-              decoration: BoxDecoration(
-                  color: Color(0xff434242),
-                  borderRadius: BorderRadius.circular(20.sp)
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'price ',
-                    style: TextStyle(
-                      fontSize: 13.sp,
-                      color: Colors.white,
-                      fontFamily: 'Alata',
-                    ),
-                  ),
-                  Text(
-                    '${model.items[0].price}',
-                    style: TextStyle(
-                      fontSize: 19.sp,
-                      color: Colors.white,
-                      fontFamily: 'Alata',
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            )
           ],
         ),
       ),
