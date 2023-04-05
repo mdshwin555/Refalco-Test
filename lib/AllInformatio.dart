@@ -4,14 +4,15 @@ import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 import 'Controllers/FavoritesController.dart';
 import 'Model/OrderModel.dart';
-import 'ShowItems.dart';
-import 'ShowView.dart';
+import 'package:intl/intl.dart';
 
 class AllInfo extends StatelessWidget {
   final OrderModel model;
 
   AllInfo(this.model);
-  final FavoriteOrdersController controller = Get.find();
+
+  final FavoriteOrdersController iconController =
+      Get.put(FavoriteOrdersController());
 
   @override
   Widget build(BuildContext context) {
@@ -65,20 +66,26 @@ class AllInfo extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Positioned(
-                    top: 2.h,
-                    right: 3.w,
-                    child: CircleAvatar(
-                      backgroundColor: Colors.white,
-                      radius: 17.sp,
-                      child: IconButton(
-                        onPressed: () {
-                          controller.favoriteOrders.add(model);
-                        },
-                        icon: Icon(
-                          Icons.favorite_border,
-                          size: 18.sp,
-                          color: Colors.red,
+                  Obx(
+                        () => Positioned(
+                      top: 2.h,
+                      right: 3.w,
+                      child: CircleAvatar(
+                        backgroundColor: Colors.white,
+                        radius: 17.sp,
+                        child: IconButton(
+                          icon: iconController.isFavorite.value
+                              ? Icon(
+                            Icons.favorite,
+                            size: 18.sp,
+                            color: Colors.red,
+                          )
+                              : Icon(
+                            Icons.favorite_border,
+                            size: 18.sp,
+                            color: Colors.red,
+                          ),
+                          onPressed: () => iconController.toggleFavorite(),
                         ),
                       ),
                     ),
@@ -180,7 +187,7 @@ class AllInfo extends StatelessWidget {
               height: 3.h,
             ),
             Container(
-              height: 40.h,
+              height: 35.h,
               child: GridView.count(
                 crossAxisCount: 2,
                 children: List.generate(
@@ -273,7 +280,30 @@ class AllInfo extends StatelessWidget {
                   },
                 ),
               ),
-            )
+            ),
+            Center(
+              child: Text(
+                'Created At :',
+                style: TextStyle(
+                    color: Colors.white, fontSize: 17.sp, fontFamily: 'Alata'),
+              ),
+            ),
+            SizedBox(
+              height: 1.5.h,
+            ),
+            Center(
+              child: Text(
+                DateFormat()
+                    .add_yMMMEd()
+                    .format(DateTime.parse(model.created_at)),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20.sp,
+                  fontFamily: 'Alata',
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
           ],
         ),
       ),

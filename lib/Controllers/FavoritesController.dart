@@ -1,6 +1,11 @@
 import 'package:get/get.dart';
-import '../Model/OrderModel.dart';
 
 class FavoriteOrdersController extends GetxController {
-  var favoriteOrders = <OrderModel>[].obs;
+  // RxBool to track the current state of the icon
+  RxBool isFavorite = false.obs;
+
+  // Function to toggle the state of the icon
+  void toggleFavorite() {
+    isFavorite.value = !isFavorite.value;
+  }
 }

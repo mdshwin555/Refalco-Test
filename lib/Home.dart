@@ -12,9 +12,56 @@ import 'Controllers/HomeController.dart';
 import 'Controllers/OrdersController.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'ShowView.dart';
+import 'dart:async';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
   final HomeController homeController = Get.put(HomeController());
+  ScrollController _scrollController = ScrollController();
+  int limit = 10;
+  int page = 1;
+  bool isLoadMore = false;
+  List Orders =[];
+
+  Future getOrders() async {
+    var response = await http.get(
+      Uri.parse(
+          'https://62f4b229ac59075124c1e40b.mockapi.io/api/v1/orders?page=$page&limit=$limit'),
+    );
+
+    if (response.statusCode == 200) {
+      var urjson = json.decode(response.body);
+      List<OrderModel> models = [];
+      for (var j in urjson['data']) models.add(OrderModel.fromJson(j));
+      return models;
+    }
+  }
+
+  @override
+  void initState() {
+    _scrollController.addListener(() async {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        setState(() {
+          isLoadMore = true;
+          _scrollController.jumpTo(0);
+        });
+        limit += 0;
+        page += 1;
+         await getOrders();
+        // setState(() {
+        //   isLoadMore=false;
+        // });
+      }
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,10 +76,10 @@ class Home extends StatelessWidget {
         controller: homeController.pageController,
         children: [
           FutureBuilder<dynamic>(
-            future: OrdersController.getOrders(),
+            future: getOrders(),
             builder: (context, AsyncSnapshot<dynamic> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(
+                return isLoadMore==true?SizedBox(): Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -55,20 +102,36 @@ class Home extends StatelessWidget {
               if (snapshot.connectionState == ConnectionState.done) {
                 return AnimationLimiter(
                   child: GridView.count(
+                    controller: _scrollController,
                     crossAxisCount: 2,
                     children: List.generate(
-                      snapshot.data.length,
-                          (int index) {
-                        return AnimationConfiguration.staggeredGrid(
-                          position: index,
-                          duration: Duration(milliseconds: 375),
-                          columnCount: 2,
-                          child: ScaleAnimation(
-                            child: FadeInAnimation(
-                              child: ShowView(snapshot.data[index]),
+                      isLoadMore == true
+                          ? snapshot.data.length + 1
+                          : snapshot.data.length,
+                      (int index) {
+                        if (index >= snapshot.data.length) {
+                          return Container(
+                            margin: EdgeInsets.symmetric(vertical: 20.w),
+                            child: Transform.translate(
+                              offset: Offset(22.w,0),
+                              child: Lottie.asset(
+                                Images.loading,
+                                height: 30.h,
+                              ),
                             ),
-                          ),
-                        );
+                          );
+                        } else {
+                          return AnimationConfiguration.staggeredGrid(
+                            position: index,
+                            duration: Duration(milliseconds: 375),
+                            columnCount: 2,
+                            child: ScaleAnimation(
+                              child: FadeInAnimation(
+                                child: ShowView(snapshot.data[index]),
+                              ),
+                            ),
+                          );
+                        }
                       },
                     ),
                   ),
@@ -102,7 +165,6 @@ class Home extends StatelessWidget {
           FavoriteList(),
         ],
       ),
-
       bottomNavigationBar: GetX<HomeController>(builder: (controller) {
         return CircleNavBar(
           cornerRadius: BorderRadius.vertical(

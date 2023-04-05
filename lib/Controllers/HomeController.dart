@@ -2,9 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 class HomeController extends GetxController{
-  final RxInt pageInx = 1.obs;
+  final RxInt pageInx = 0.obs;
   final PageController pageController = PageController(
-      initialPage: 1
+      initialPage: 0
   );
 
   @override

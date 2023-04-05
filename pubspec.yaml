@@ -41,6 +41,7 @@ dependencies:
   lottie:
   flutter_staggered_grid_view:
   circle_nav_bar:
+  intl: ^0.18.0
 
 dev_dependencies:
   flutter_test:
