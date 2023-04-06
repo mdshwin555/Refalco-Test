@@ -44,6 +44,8 @@ dependencies:
   circle_nav_bar:
   intl: ^0.18.0
   flutter_intro: ^2.0.1
+  google_maps_flutter:
+  shared_preferences:
 
 dev_dependencies:
   flutter_test:

@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:get/get.dart';
@@ -5,7 +6,7 @@ import 'package:sizer/sizer.dart';
 import '../../Controllers/FavoritesController.dart';
 import '../../Model/OrderModel.dart';
 import 'package:intl/intl.dart';
-import 'package:audioplayers/audioplayers.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class AllInfo extends StatelessWidget {
   final OrderModel model;
@@ -14,6 +15,19 @@ class AllInfo extends StatelessWidget {
 
   final FavoriteOrdersController iconController =
       Get.put(FavoriteOrdersController());
+  void toggleFavorite(OrderModel model) {
+    model.isFavorite.value = !model.isFavorite.value;
+    final player = AudioPlayer();
+    model.isFavorite.value == true
+        ? player.play(AssetSource('audios/like.wav'))
+        : player.stop();
+    // Add or remove the order from the list of favorite orders
+    if (model.isFavorite.value) {
+      Get.find<FavoriteOrdersController>().favoriteOrders.add(model);
+    } else {
+      Get.find<FavoriteOrdersController>().favoriteOrders.remove(model);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,21 +89,22 @@ class AllInfo extends StatelessWidget {
                         backgroundColor: Colors.white,
                         radius: 17.sp,
                         child: GestureDetector(
-                          child: iconController.isFavorite.value
+                          child: model.isFavorite.value
                               ? Icon(
-                                  Icons.favorite,
-                                  size: 18.sp,
-                                  color: Colors.red,
-                                )
+                            Icons.favorite,
+                            size: 18.sp,
+                            color: Colors.red,
+                          )
                               : Icon(
-                                  Icons.favorite_border,
-                                  size: 18.sp,
-                                  color: Colors.red,
-                                ),
-                          onTap: ()  {
-                            iconController.toggleFavorite();
+                            Icons.favorite_border,
+                            size: 18.sp,
+                            color: Colors.red,
+                          ),
+                          onTap: () {
+                            toggleFavorite(model);
                           },
                         ),
+
                       ),
                     ),
                   ),

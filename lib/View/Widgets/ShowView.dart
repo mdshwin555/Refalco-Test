@@ -1,12 +1,13 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
-
+import 'package:technical_test/main.dart';
 import '../../Controllers/FavoritesController.dart';
 import '../../Model/OrderModel.dart';
 import '../Screens/AllInformatio.dart';
-
+import '../Screens/FavoriteList.dart';
 
 class ShowView extends StatelessWidget {
   final FavoriteOrdersController controller = Get.find();
@@ -15,6 +16,28 @@ class ShowView extends StatelessWidget {
   final OrderModel model;
 
   ShowView(this.model);
+
+  void toggleFavorite(OrderModel model) {
+    model.isFavorite.value = !model.isFavorite.value;
+    final player = AudioPlayer();
+    model.isFavorite.value == true
+        ? player.play(AssetSource('audios/like.wav'))
+        : player.stop();
+    // Add or remove the order from the list of favorite orders
+    if (model.isFavorite.value) {
+      Get.find<FavoriteOrdersController>().favoriteOrders.add(model);
+    } else {
+      Get.find<FavoriteOrdersController>().favoriteOrders.remove(model);
+    }
+    // Save the value of isFavorite to shared preferences
+    saveIsFavorite(model.isFavorite.value);
+  }
+
+
+  void saveIsFavorite(bool value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isFavorite', value);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,21 +100,22 @@ class ShowView extends StatelessWidget {
                             top: 2.h,
                           ),
                           child: GestureDetector(
-                            child: iconController.isFavorite.value
+                            child: model.isFavorite.value
                                 ? Icon(
-                                    Icons.favorite,
-                                    size: 18.sp,
-                                    color: Colors.red,
-                                  )
+                              Icons.favorite,
+                              size: 18.sp,
+                              color: Colors.red,
+                            )
                                 : Icon(
-                                    Icons.favorite_border,
-                                    size: 18.sp,
-                                    color: Colors.red,
-                                  ),
+                              Icons.favorite_border,
+                              size: 18.sp,
+                              color: Colors.red,
+                            ),
                             onTap: () {
-                              iconController.toggleFavorite();
+                              toggleFavorite(model);
                             },
                           ),
+
                         ),
                       ),
                     ],
@@ -145,6 +169,7 @@ class ShowView extends StatelessWidget {
           ],
         ),
       ),
+
     );
   }
 }

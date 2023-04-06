@@ -11,8 +11,10 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../../Constants/Images.dart';
+import '../../Controllers/FavoritesController.dart';
 import '../../Controllers/HomeController.dart';
 import '../Widgets/ShowView.dart';
+import 'OrderListScreen.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -21,6 +23,8 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final HomeController homeController = Get.put(HomeController());
+  final FavoriteOrdersController favoriteOrdersController = Get.put(FavoriteOrdersController());
+  late final List<OrderModel> favoriteOrders;
   ScrollController _scrollController = ScrollController();
   int limit = 10;
   int page = 1;
@@ -56,7 +60,7 @@ class _HomeState extends State<Home> {
         setState(() {
           isLoadMore = true;
         });
-        limit += 0;
+        limit +=0;
         page += 1;
         List<OrderModel> newOrders = await getOrders();
         setState(() {
@@ -72,136 +76,16 @@ class _HomeState extends State<Home> {
     return Scaffold(
       extendBody: true,
       backgroundColor: Colors.black,
-      appBar: AppBar(
-        title: Text('Order List'),
-      ),
       body: PageView(
         //physics: NeverScrollableScrollPhysics(),
         controller: homeController.pageController,
         children: [
-          FutureBuilder<dynamic>(
-            future: getOrders(),
-            builder: (context, AsyncSnapshot<dynamic> snapshot) {
-              // if (snapshot.connectionState == ConnectionState.waiting&& isLoadMore == false) {
-              //   return Center(
-              //     child: Column(
-              //       mainAxisAlignment: MainAxisAlignment.center,
-              //       children: [
-              //         Lottie.asset(
-              //           Images.loading,
-              //           height: 10.h,
-              //         ),
-              //         Text(
-              //           'Loading',
-              //           style: TextStyle(
-              //             fontWeight: FontWeight.bold,
-              //             fontSize: 15.sp,
-              //             color: Colors.white,
-              //           ),
-              //         ),
-              //       ],
-              //     ),
-              //   );
-              // }
-              //else
-              if (snapshot.connectionState == ConnectionState.waiting &&
-                  isLoadMore == true) {
-                return AnimationLimiter(
-                  child: GridView.count(
-                    controller: _scrollController,
-                    crossAxisCount: 2,
-                    children: List.generate(
-                      isLoadMore == true ? _orders.length + 1 : _orders.length,
-                      (int index) {
-                        if (index == _orders.length && isLoadMore == true) {
-                          return Container(
-                            alignment: Alignment.center,
-                            height: 50.0,
-                            width: 100.w,
-                            child: Transform.translate(
-                              offset: Offset(25.w, 0),
-                              child: Lottie.asset(
-                                Images.loading,
-                                height: 10.h,
-                              ),
-                            ),
-                          );
-                        }
-                        return AnimationConfiguration.staggeredGrid(
-                          position: index,
-                          duration: Duration(milliseconds: 375),
-                          columnCount: 2,
-                          child: ScaleAnimation(
-                            child: FadeInAnimation(
-                              child: ShowView(_orders[index]),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                );
-              }
-              if (snapshot.connectionState == ConnectionState.done) {
-                return AnimationLimiter(
-                  child: GridView.count(
-                    controller: _scrollController,
-                    crossAxisCount: 2,
-                    children: List.generate(
-                      isLoadMore == true ? _orders.length + 1 : _orders.length,
-                      (int index) {
-                        if (index == _orders.length && isLoadMore == true) {
-                          return Container(
-                            alignment: Alignment.center,
-                            height: 50.0,
-                            width: 100.w,
-                            child: Transform.translate(
-                              offset: Offset(25.w, 0),
-                              child: Lottie.asset(
-                                Images.loading,
-                                height: 10.h,
-                              ),
-                            ),
-                          );
-                        }
-                        return AnimationConfiguration.staggeredGrid(
-                          position: index,
-                          duration: Duration(milliseconds: 375),
-                          columnCount: 2,
-                          child: ScaleAnimation(
-                            child: FadeInAnimation(
-                              child: ShowView(_orders[index]),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                );
-              } else {
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Lottie.asset(
-                        Images.loading,
-                        height: 10.h,
-                      ),
-                      Text(
-                        'Loading',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15.sp,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              }
-            },
+          OrderList(),
+          FavoriteScreen(
+            favoriteOrders:
+            Get.find<FavoriteOrdersController>()
+                .favoriteOrders,
           ),
-          FavoriteList(),
         ],
       ),
       bottomNavigationBar: GetX<HomeController>(builder: (controller) {

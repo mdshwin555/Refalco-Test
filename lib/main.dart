@@ -3,8 +3,14 @@ import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 import 'Constants/constants.dart';
 import 'View/Screens/Home.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
+SharedPreferences? sharedPref;
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  bool isFavorite = prefs.getBool('isFavorite') ?? false;
   runApp(MyApp());
 }
 
@@ -19,16 +25,18 @@ class MyApp extends StatelessWidget {
             appBarTheme: AppBarTheme(
               centerTitle: true,
               toolbarHeight: 10.h,
-              color: Colors.black, // sets the background color of the AppBar
-              foregroundColor: Colors.white, // sets the text color of the AppBar
+              color: Colors.black,
+              // sets the background color of the AppBar
+              foregroundColor: Colors.white,
+              // sets the text color of the AppBar
               iconTheme: IconThemeData(
-                color: Colors.white, // sets the color of the icons in the AppBar
+                color:
+                    Colors.white, // sets the color of the icons in the AppBar
               ),
               titleTextStyle: TextStyle(
                 fontSize: 25.sp,
                 fontWeight: FontWeight.w600,
                 fontFamily: 'Alata',
-
               ),
             ),
           ),

@@ -1,3 +1,5 @@
+import 'package:get/get_rx/src/rx_types/rx_types.dart';
+
 class OrderModel {
   final String orderid;
   final String total;
@@ -6,7 +8,9 @@ class OrderModel {
   final String currency;
   final double latitude;
   final double longitude;
+  RxBool isFavorite = false.obs;
   final List<MyItemModel> items;
+
 
   OrderModel({
     required this.orderid,
