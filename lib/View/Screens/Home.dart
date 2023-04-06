@@ -10,7 +10,6 @@ import 'package:technical_test/Model/OrderModel.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-
 import '../../Constants/Images.dart';
 import '../../Controllers/HomeController.dart';
 import '../Widgets/ShowView.dart';
@@ -26,13 +25,11 @@ class _HomeState extends State<Home> {
   int limit = 10;
   int page = 1;
   bool isLoadMore = false;
-  List Orders =[];
+  List<OrderModel> _orders = [];
 
-  Future getOrders() async {
-    var response = await http.get(
-      Uri.parse(
-          'https://62f4b229ac59075124c1e40b.mockapi.io/api/v1/orders?page=$page&limit=$limit'),
-    );
+  Future<List<OrderModel>> getOrders() async {
+    var response = await http.get(Uri.parse(
+        'https://62f4b229ac59075124c1e40b.mockapi.io/api/v1/orders?page=$page&limit=$limit'));
 
     if (response.statusCode == 200) {
       var urjson = json.decode(response.body);
@@ -40,26 +37,34 @@ class _HomeState extends State<Home> {
       for (var j in urjson['data']) models.add(OrderModel.fromJson(j));
       return models;
     }
+    // Return an empty list if there are no OrderModel objects to return
+    return [];
   }
 
   @override
   void initState() {
+    super.initState();
+    getOrders().then((value) {
+      setState(() {
+        _orders = value;
+      });
+    });
+
     _scrollController.addListener(() async {
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
         setState(() {
           isLoadMore = true;
-          _scrollController.jumpTo(0);
         });
         limit += 0;
         page += 1;
-         await getOrders();
-        // setState(() {
-        //   isLoadMore=false;
-        // });
+        List<OrderModel> newOrders = await getOrders();
+        setState(() {
+          _orders.addAll(newOrders);
+          isLoadMore = true;
+        });
       }
     });
-    super.initState();
   }
 
   @override
@@ -77,8 +82,104 @@ class _HomeState extends State<Home> {
           FutureBuilder<dynamic>(
             future: getOrders(),
             builder: (context, AsyncSnapshot<dynamic> snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return isLoadMore==true?SizedBox(): Center(
+              // if (snapshot.connectionState == ConnectionState.waiting&& isLoadMore == false) {
+              //   return Center(
+              //     child: Column(
+              //       mainAxisAlignment: MainAxisAlignment.center,
+              //       children: [
+              //         Lottie.asset(
+              //           Images.loading,
+              //           height: 10.h,
+              //         ),
+              //         Text(
+              //           'Loading',
+              //           style: TextStyle(
+              //             fontWeight: FontWeight.bold,
+              //             fontSize: 15.sp,
+              //             color: Colors.white,
+              //           ),
+              //         ),
+              //       ],
+              //     ),
+              //   );
+              // }
+              //else
+              if (snapshot.connectionState == ConnectionState.waiting &&
+                  isLoadMore == true) {
+                return AnimationLimiter(
+                  child: GridView.count(
+                    controller: _scrollController,
+                    crossAxisCount: 2,
+                    children: List.generate(
+                      isLoadMore == true ? _orders.length + 1 : _orders.length,
+                      (int index) {
+                        if (index == _orders.length && isLoadMore == true) {
+                          return Container(
+                            alignment: Alignment.center,
+                            height: 50.0,
+                            width: 100.w,
+                            child: Transform.translate(
+                              offset: Offset(25.w, 0),
+                              child: Lottie.asset(
+                                Images.loading,
+                                height: 10.h,
+                              ),
+                            ),
+                          );
+                        }
+                        return AnimationConfiguration.staggeredGrid(
+                          position: index,
+                          duration: Duration(milliseconds: 375),
+                          columnCount: 2,
+                          child: ScaleAnimation(
+                            child: FadeInAnimation(
+                              child: ShowView(_orders[index]),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                );
+              }
+              if (snapshot.connectionState == ConnectionState.done) {
+                return AnimationLimiter(
+                  child: GridView.count(
+                    controller: _scrollController,
+                    crossAxisCount: 2,
+                    children: List.generate(
+                      isLoadMore == true ? _orders.length + 1 : _orders.length,
+                      (int index) {
+                        if (index == _orders.length && isLoadMore == true) {
+                          return Container(
+                            alignment: Alignment.center,
+                            height: 50.0,
+                            width: 100.w,
+                            child: Transform.translate(
+                              offset: Offset(25.w, 0),
+                              child: Lottie.asset(
+                                Images.loading,
+                                height: 10.h,
+                              ),
+                            ),
+                          );
+                        }
+                        return AnimationConfiguration.staggeredGrid(
+                          position: index,
+                          duration: Duration(milliseconds: 375),
+                          columnCount: 2,
+                          child: ScaleAnimation(
+                            child: FadeInAnimation(
+                              child: ShowView(_orders[index]),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                );
+              } else {
+                return Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -89,67 +190,6 @@ class _HomeState extends State<Home> {
                       Text(
                         'Loading',
                         style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15.sp,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              }
-              if (snapshot.connectionState == ConnectionState.done) {
-                return AnimationLimiter(
-                  child: GridView.count(
-                    controller: _scrollController,
-                    crossAxisCount: 2,
-                    children: List.generate(
-                      isLoadMore == true
-                          ? snapshot.data.length + 1
-                          : snapshot.data.length,
-                      (int index) {
-                        if (index >= snapshot.data.length) {
-                          return Container(
-                            margin: EdgeInsets.symmetric(vertical: 20.w),
-                            child: Transform.translate(
-                              offset: Offset(22.w,0),
-                              child: Lottie.asset(
-                                Images.loading,
-                                height: 30.h,
-                              ),
-                            ),
-                          );
-                        } else {
-                          return AnimationConfiguration.staggeredGrid(
-                            position: index,
-                            duration: Duration(milliseconds: 375),
-                            columnCount: 2,
-                            child: ScaleAnimation(
-                              child: FadeInAnimation(
-                                child: ShowView(snapshot.data[index]),
-                              ),
-                            ),
-                          );
-                        }
-                      },
-                    ),
-                  ),
-                );
-              } else {
-                return Center(
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        height: 25.h,
-                      ),
-                      Lottie.asset(
-                        Images.noitems,
-                        height: 30.h,
-                      ),
-                      Text(
-                        'noitems',
-                        style: TextStyle(
-                          //fontFamily: Fonts.h,
                           fontWeight: FontWeight.bold,
                           fontSize: 15.sp,
                           color: Colors.white,
