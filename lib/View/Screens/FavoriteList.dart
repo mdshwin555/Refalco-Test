@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
-import 'Constants/Images.dart';
-import 'Controllers/FavoritesController.dart';
+import '../../Constants/Images.dart';
+import '../../Controllers/FavoritesController.dart';
 import 'package:sizer/sizer.dart';
 
 class FavoriteList extends StatelessWidget {

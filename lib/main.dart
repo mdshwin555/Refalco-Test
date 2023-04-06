@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 import 'Constants/constants.dart';
-import 'Home.dart';
+import 'View/Screens/Home.dart';
 
 void main() {
   runApp(MyApp());

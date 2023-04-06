@@ -1,20 +1,19 @@
 import 'package:circle_nav_bar/circle_nav_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 import 'package:lottie/lottie.dart';
-import 'package:technical_test/FavoriteList.dart';
+import 'package:technical_test/View/Screens/FavoriteList.dart';
 import 'package:technical_test/Model/OrderModel.dart';
-import 'Constants/Images.dart';
-import 'Controllers/HomeController.dart';
-import 'Controllers/OrdersController.dart';
-import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-import 'ShowView.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+
+import '../../Constants/Images.dart';
+import '../../Controllers/HomeController.dart';
+import '../Widgets/ShowView.dart';
 
 class Home extends StatefulWidget {
   @override

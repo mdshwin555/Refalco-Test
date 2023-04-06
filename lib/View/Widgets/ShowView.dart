@@ -2,9 +2,11 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
-import 'AllInformatio.dart';
-import 'Controllers/FavoritesController.dart';
-import 'Model/OrderModel.dart';
+
+import '../../Controllers/FavoritesController.dart';
+import '../../Model/OrderModel.dart';
+import '../Screens/AllInformatio.dart';
+
 
 class ShowView extends StatelessWidget {
   final FavoriteOrdersController controller = Get.find();

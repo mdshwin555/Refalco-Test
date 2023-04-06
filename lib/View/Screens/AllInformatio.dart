@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
-import 'Controllers/FavoritesController.dart';
-import 'Model/OrderModel.dart';
+import '../../Controllers/FavoritesController.dart';
+import '../../Model/OrderModel.dart';
 import 'package:intl/intl.dart';
 import 'package:audioplayers/audioplayers.dart';
 
